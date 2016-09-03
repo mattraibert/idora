@@ -58,11 +58,11 @@
     crossorigin="anonymous"></script>
 <script>
   $(document).ready(function () {
-    new Well($("#carousel")).buildStage().buildArrows().buildDots();
+    $("#carousel").well();
   });
 
   jQuery.fn.well = function () {
-    var well = new Well(this);
+    var well = new Well(this).buildStage().buildArrows().buildDots();
     return this;
   };
 
