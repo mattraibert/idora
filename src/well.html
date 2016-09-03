@@ -2,6 +2,7 @@
   #carousel_inner {
     float: left;
     width: 100%;
+    height: 100%;
     overflow: hidden;
   }
 
@@ -20,6 +21,8 @@
   #carousel {
     position: relative;
     width: 630px;
+    height: 250px;
+    margin: 40px;
   }
 
   .dots {
@@ -32,7 +35,20 @@
     border-radius: 50%;
     width: 10px;
     height: 10px;
+    margin: 4px;
     background-color: red;
+  }
+
+  .nav .arrow {
+    position: absolute;
+    top: 50%;
+  }
+
+  .nav .next {
+    right: -10px;
+  }
+  .nav .prev {
+    left: -10px;
   }
 </style>
 <script
@@ -47,12 +63,8 @@
 
   function buildArrows() {
     var nav = $("<div class='nav'></div>");
-    var next = $("<div class='next'>&gt;</div>").on("click", function () {
-      scrollNext();
-    });
-    var prev = $("<div class='prev'>&lt;</div>").on("click", function () {
-      scrollPrev();
-    });
+    var next = $("<div class='next arrow'>&gt;</div>").on("click", scrollNext);
+    var prev = $("<div class='prev arrow'>&lt;</div>").on("click", scrollPrev);
     nav.append(prev);
     nav.append(next);
     $("#carousel").append(nav);
@@ -62,21 +74,29 @@
     var dots = $("<div class='dots'></div>");
     $("#carousel_stage").children().each(function (i, o) {
       if (i % 2 == 0) {
-        dots.append($("<div class='dot'></div>").on("click", function () {
-          scrollTo(i);
-        }));
+        dots.append(dot(i, o));
       }
     });
     $("#carousel").append(dots);
   }
 
+  function dot(i, o) {
+    return $("<div><div class='dot'></div></div>").on("click", function () {
+      scrollTo(i);
+    })
+  }
+
   var current_item = 0;
   function scrollNext() {
-    scrollTo(current_item + 1);
+    scrollBy(1);
   }
 
   function scrollPrev() {
-    scrollTo(current_item - 1);
+    scrollBy(-1);
+  }
+
+  function scrollBy(n) {
+    scrollTo(current_item + n);
   }
 
   function numItems() {
@@ -95,12 +115,12 @@
   <div id='carousel_inner'>
     <div id='carousel_stage'>
       <div><a href='#'><img src='https://placekitten.com/200/100'/></a></div>
-      <div><a href='#'><img src='https://placekitten.com/300/100'/></a></div>
+      <div><a href='#'><img src='https://placekitten.com/300/150'/></a></div>
       <div><a href='#'><img src='https://placekitten.com/100/100'/></a></div>
-      <div><a href='#'><img src='https://placekitten.com/500/100'/></a></div>
-      <div><a href='#'><img src='https://placekitten.com/200/100'/></a></div>
-      <div><a href='#'><img src='https://placekitten.com/300/100'/></a></div>
-      <div><a href='#'><img src='https://placekitten.com/200/100'/></a></div>
+      <div><a href='#'><img src='https://placekitten.com/500/200'/></a></div>
+      <div><a href='#'><img src='https://placekitten.com/200/180'/></a></div>
+      <div><a href='#'><img src='https://placekitten.com/300/220'/></a></div>
+      <div><a href='#'><img src='https://placekitten.com/200/220'/></a></div>
       <div><a href='#'><img src='https://placekitten.com/100/100'/></a></div>
     </div>
   </div>
