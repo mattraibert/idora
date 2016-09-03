@@ -58,6 +58,7 @@
     crossorigin="anonymous"></script>
 <script>
   $(document).ready(function () {
+    $('#carousel').wrapInner("<div class='carousel_stage'></div>");
     $('#carousel').wrapInner("<div class='carousel_inner'></div>");
     buildArrows();
     buildDots();
@@ -114,14 +115,12 @@
   }
 </script>
 <div id='carousel'>
-  <div class='carousel_stage'>
-    <div><a href='#'><img src='https://placekitten.com/200/100'/></a></div>
-    <div><a href='#'><img src='https://placekitten.com/300/150'/></a></div>
-    <div><a href='#'><img src='https://placekitten.com/100/100'/></a></div>
-    <div><a href='#'><img src='https://placekitten.com/500/200'/></a></div>
-    <div><a href='#'><img src='https://placekitten.com/200/180'/></a></div>
-    <div><a href='#'><img src='https://placekitten.com/300/220'/></a></div>
-    <div><a href='#'><img src='https://placekitten.com/200/220'/></a></div>
-    <div><a href='#'><img src='https://placekitten.com/100/100'/></a></div>
-  </div>
+  <div><a href='#'><img src='https://placekitten.com/200/100'/></a></div>
+  <div><a href='#'><img src='https://placekitten.com/300/150'/></a></div>
+  <div><a href='#'><img src='https://placekitten.com/100/100'/></a></div>
+  <div><a href='#'><img src='https://placekitten.com/500/200'/></a></div>
+  <div><a href='#'><img src='https://placekitten.com/200/180'/></a></div>
+  <div><a href='#'><img src='https://placekitten.com/300/220'/></a></div>
+  <div><a href='#'><img src='https://placekitten.com/200/220'/></a></div>
+  <div><a href='#'><img src='https://placekitten.com/100/100'/></a></div>
 </div>
