@@ -1,4 +1,3 @@
-
 $(document).ready(function () {
   $("#carousel").well();
 });
@@ -16,38 +15,6 @@ function Well(root) {
 Well.prototype.buildStage = function () {
   this.root.wrapInner("<div class='carousel_stage'></div>").wrapInner("<div class='carousel_inner'></div>");
   return this;
-};
-
-Well.prototype.buildArrows = function () {
-  var well = this;
-  var nav = $("<div class='nav'></div>");
-  nav.append($("<div class='prev arrow'></div>").on("click", function () {
-    well.scrollPrev();
-  }));
-  nav.append($("<div class='next arrow'></div>").on("click", function () {
-    well.scrollNext();
-  }));
-  this.root.append(nav);
-  return this;
-};
-
-Well.prototype.buildDots = function () {
-  var dots = $("<div class='dots'></div>");
-  var well = this;
-  $(".carousel_stage").children().each(function (i, o) {
-    if (i % 2 == 0) {
-      dots.append(well.dot(i, o));
-    }
-  });
-  this.root.append(dots);
-  return this;
-};
-
-Well.prototype.dot = function (i, o) {
-  var well = this;
-  return $("<div><div class='dot'></div></div>").on("click", function () {
-    well.scrollTo(i);
-  })
 };
 
 Well.prototype.scrollNext = function () {
@@ -72,4 +39,40 @@ Well.prototype.scrollTo = function (i) {
   var left = stage.find("div:nth-child(" + target + ")").position().left;
   stage.animate({'left': -1 * left}, {queue: false, duration: 300});
   this.currentItem = i;
+};
+
+//Arrows
+
+Well.prototype.buildArrows = function () {
+  var well = this;
+  var nav = $("<div class='nav'></div>");
+  nav.append($("<div class='prev arrow'></div>").on("click", function () {
+    well.scrollPrev();
+  }));
+  nav.append($("<div class='next arrow'></div>").on("click", function () {
+    well.scrollNext();
+  }));
+  this.root.append(nav);
+  return this;
+};
+
+//Dots
+
+Well.prototype.buildDots = function () {
+  var dots = $("<div class='dots'></div>");
+  var well = this;
+  $(".carousel_stage").children().each(function (i, o) {
+    if (i % 2 == 0) {
+      dots.append(well.dot(i, o));
+    }
+  });
+  this.root.append(dots);
+  return this;
+};
+
+Well.prototype.dot = function (i, o) {
+  var well = this;
+  return $("<div><div class='dot'></div></div>").on("click", function () {
+    well.scrollTo(i);
+  })
 };
