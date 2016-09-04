@@ -12,6 +12,7 @@
 }
 
 .carousel_stage > * {
+  vertical-align: middle;
   padding: 4px;
   border: 1px solid grey;
   margin: 5px;

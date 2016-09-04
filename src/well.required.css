@@ -15,5 +15,5 @@
 }
 
 .carousel_stage > * {
-  float: left;
+  display: inline-block;
 }
