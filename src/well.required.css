@@ -1,9 +1,5 @@
-
 #carousel {
   position: relative;
-  width: 630px;
-  height: 250px;
-  margin: 40px;
 }
 
 .carousel_inner {
@@ -14,40 +10,10 @@
 }
 
 .carousel_stage {
-  margin: 0;
   width: 9999px;
-  padding: 0;
   position: relative;
 }
 
 .carousel_stage > * {
   float: left;
-  padding: 10px;
-}
-
-.dots {
-  position: absolute;
-  top: 0;
-  right: -40px;
-}
-
-.dot {
-  border-radius: 50%;
-  width: 10px;
-  height: 10px;
-  margin: 4px;
-  background-color: red;
-}
-
-.nav .arrow {
-  position: absolute;
-  top: 50%;
-}
-
-.nav .next {
-  right: -10px;
-}
-
-.nav .prev {
-  left: -10px;
 }

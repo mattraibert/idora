@@ -21,10 +21,10 @@ Well.prototype.buildStage = function () {
 Well.prototype.buildArrows = function () {
   var well = this;
   var nav = $("<div class='nav'></div>");
-  nav.append($("<div class='prev arrow'>&lt;</div>").on("click", function () {
+  nav.append($("<div class='prev arrow'></div>").on("click", function () {
     well.scrollPrev();
   }));
-  nav.append($("<div class='next arrow'>&gt;</div>").on("click", function () {
+  nav.append($("<div class='next arrow'></div>").on("click", function () {
     well.scrollNext();
   }));
   this.root.append(nav);
