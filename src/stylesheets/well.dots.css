@@ -1,0 +1,19 @@
+.dots {
+  position: absolute;
+  right: -50px;
+  border: 1px solid green;
+  display: inline-block;
+}
+
+.dots > div {
+  border: 1px solid transparent;
+  margin: -1px;
+}
+
+.dot {
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  margin: 4px;
+  background-color: red;
+}
