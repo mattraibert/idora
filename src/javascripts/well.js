@@ -35,17 +35,27 @@ Well.prototype.numItems = function () {
 
 Well.prototype.scrollTo = function (i) {
   var stage = $(".carousel_stage");
-  var target = (i % this.numItems()) + 1;
+  var target = this.findSlideNum(i);
   var left = stage.find("div:nth-child(" + target + ")").position().left;
   stage.animate({'left': -1 * left}, {queue: false, duration: 300});
   this.currentItem = i;
+};
+
+Well.prototype.findSlideNum = function (i) {
+  var numItems = this.numItems();
+  if (i < 0) {
+    i = numItems - ((i * -1) % numItems);
+  } else {
+    i = i % numItems;
+  }
+  return i + 1;
 };
 
 //Keyboard
 
 Well.prototype.setupKeyboard = function () {
   var well = this;
-  $(document).keydown(function (e) {
+  $(document).on("keydown", function (e) {
     if (e.which == 37) {
       well.scrollPrev();
       e.preventDefault();
