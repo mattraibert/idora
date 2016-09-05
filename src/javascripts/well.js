@@ -43,12 +43,13 @@ Well.prototype.scrollTo = function (i) {
 
 Well.prototype.findSlideNum = function (i) {
   var numItems = this.numItems();
+  var ret;
   if (i < 0) {
-    i = numItems - ((i * -1) % numItems);
+    ret = numItems - (Math.abs(i + 1) % numItems);
   } else {
-    i = i % numItems;
+    ret = i % numItems + 1;
   }
-  return i + 1;
+  return ret;
 };
 
 //Keyboard
