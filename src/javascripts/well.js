@@ -1,11 +1,17 @@
-$(document).ready(function () {
-  $("#carousel").well();
-});
+if (typeof jQuery !== 'undefined') {
+  framework = jQuery;
+} else {
+  framework = $;
+}
 
-jQuery.fn.well = function () {
-  var well = new Well(this).setupKeyboard().buildStage().buildArrows().buildDots();
-  return this;
-};
+if (typeof framework !== 'undefined') {
+  framework.fn.well = function () {
+    new Well(this).setupKeyboard().buildStage().buildArrows().buildDots();
+    return this;
+  };
+} else {
+  console.error("no jQuery style plugin loaded; Well may not work.");
+}
 
 function Well(root) {
   this.root = root;
