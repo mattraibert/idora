@@ -3,7 +3,7 @@ $(document).ready(function () {
 });
 
 jQuery.fn.well = function () {
-  var well = new Well(this).buildStage().buildArrows().buildDots();
+  var well = new Well(this).setupKeyboard().buildStage().buildArrows().buildDots();
   return this;
 };
 
@@ -39,6 +39,23 @@ Well.prototype.scrollTo = function (i) {
   var left = stage.find("div:nth-child(" + target + ")").position().left;
   stage.animate({'left': -1 * left}, {queue: false, duration: 300});
   this.currentItem = i;
+};
+
+//Keyboard
+
+Well.prototype.setupKeyboard = function () {
+  var well = this;
+  $(document).keydown(function (e) {
+    if (e.which == 37) {
+      well.scrollPrev();
+      e.preventDefault();
+    }
+    if (e.which == 39) {
+      well.scrollNext();
+      e.preventDefault();
+    }
+  });
+  return this;
 };
 
 //Arrows
