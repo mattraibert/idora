@@ -4,9 +4,38 @@ if (typeof jQuery !== 'undefined') {
   framework = $;
 }
 
+// jquery.hammer.js
+(function ($, Hammer, dataAttr) {
+  function hammerify(el, options) {
+    var $el = $(el);
+    if (!$el.data(dataAttr)) {
+      $el.data(dataAttr, new Hammer($el[0], options));
+    }
+  }
+
+  $.fn.hammer = function (options) {
+    return this.each(function () {
+      hammerify(this, options);
+    });
+  };
+
+  // extend the emit method to also trigger jQuery events
+  Hammer.Manager.prototype.emit = (function (originalEmit) {
+    return function (type, data) {
+      originalEmit.call(this, type, data);
+      jQuery(this.element).triggerHandler({
+        type: type,
+        gesture: data
+      });
+    };
+  })(Hammer.Manager.prototype.emit);
+})(jQuery, Hammer, "hammer");
+
 if (typeof framework !== 'undefined') {
+  var well;
   framework.fn.well = function () {
-    new Well(this).setupKeyboard().buildStage().buildArrows().buildDots();
+    well = new Well(this).setupKeyboard().buildStage().buildArrows().buildDots().setupHammer();
+
     return this;
   };
 } else {
@@ -58,6 +87,22 @@ Well.prototype.findSlideNum = function (i) {
   return ret;
 };
 
+//Swipe
+
+Well.prototype.setupHammer = function () {
+  this.root.find("*").on("dragstart", function() {
+    return false;
+  });
+  var well = this;
+  this.root.hammer().on("panstart", function (ev) {
+    var deltaX = ev.gesture.deltaX;
+    var scrollAmt = Math.min(Math.round(deltaX / -8), 10);
+    well.scrollBy(scrollAmt);
+  });
+
+  return this;
+};
+
 //Keyboard
 
 Well.prototype.setupKeyboard = function () {
@@ -96,7 +141,7 @@ Well.prototype.buildDots = function () {
   var dots = $("<div class='dots'></div>");
   var well = this;
   $(".carousel_stage").children().each(function (i, o) {
-    if (i % 2 == 0) {
+    if (i % 5 == 0) {
       dots.append(well.dot(i, o));
     }
   });
