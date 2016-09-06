@@ -19,6 +19,7 @@ function Well(root) {
   this.root = root;
   this.currentItem = 0;
   this.slidesPerDot = 5;
+  this.loop = false;
 }
 
 Well.prototype.buildStage = function () {
@@ -46,20 +47,31 @@ Well.prototype.scrollTo = function (i) {
   var well = this;
   var stage = $(".carousel_stage");
   var target = well.findSlideNum(i);
-  var left = stage.find("div:nth-child(" + target + ")").position().left;
+  var left = stage.find("div:nth-child(" + (target + 1) + ")").position().left;
   stage.animate({'left': -1 * left}, {queue: false, duration: 300});
-  well.root.trigger("well:scrollTo", i);
-  well.currentItem = i;
+  well.root.trigger("well:scrollTo", target);
+  well.currentItem = target;
 };
 
 Well.prototype.findSlideNum = function (i) {
   var numItems = this.numItems();
   var ret;
-  if (i < 0) {
-    ret = numItems - (Math.abs(i + 1) % numItems);
+  if (this.loop) {
+    if (i < 0) {
+      ret = numItems - 1 - (Math.abs(i + 1) % numItems);
+    } else {
+      ret = i % numItems;
+    }
   } else {
-    ret = i % numItems + 1;
+    if (i < 0) {
+      ret = 0;
+    } else if (i >= numItems) {
+      ret = numItems - 1;
+    } else {
+      ret = i;
+    }
   }
+
   return ret;
 };
 
