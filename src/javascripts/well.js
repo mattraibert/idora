@@ -4,33 +4,6 @@ if (typeof jQuery !== 'undefined') {
   framework = $;
 }
 
-// jquery.hammer.js
-(function ($, Hammer, dataAttr) {
-  function hammerify(el, options) {
-    var $el = $(el);
-    if (!$el.data(dataAttr)) {
-      $el.data(dataAttr, new Hammer($el[0], options));
-    }
-  }
-
-  $.fn.hammer = function (options) {
-    return this.each(function () {
-      hammerify(this, options);
-    });
-  };
-
-  // extend the emit method to also trigger jQuery events
-  Hammer.Manager.prototype.emit = (function (originalEmit) {
-    return function (type, data) {
-      originalEmit.call(this, type, data);
-      jQuery(this.element).triggerHandler({
-        type: type,
-        gesture: data
-      });
-    };
-  })(Hammer.Manager.prototype.emit);
-})(jQuery, Hammer, "hammer");
-
 if (typeof framework !== 'undefined') {
   var well;
   framework.fn.well = function () {
@@ -45,6 +18,7 @@ if (typeof framework !== 'undefined') {
 function Well(root) {
   this.root = root;
   this.currentItem = 0;
+  this.slidesPerDot = 5;
 }
 
 Well.prototype.buildStage = function () {
@@ -140,25 +114,24 @@ Well.prototype.buildArrows = function () {
 //Dots
 
 Well.prototype.buildDots = function () {
-  var dots = $("<div class='dots'></div>");
   var well = this;
-  well.slidesPerDot = 5;
+  well.dots = $("<div class='dots'></div>");
   $(".carousel_stage").children().each(function (i, o) {
     if (i % well.slidesPerDot == 0) {
-      dots.append(well.dot(i, o));
+      well.dots.append(well.dot(i, o));
     }
   });
   well.root.on("well:scrollTo", function (e, i) {
     well.activateDots(i);
   });
-  well.root.append(dots);
-  well.activateDots(1);
+  well.root.append(well.dots);
+  well.activateDots(well.currentItem);
   return well;
 };
 
 Well.prototype.activateDots = function (i) {
   var well = this;
-  well.root.find('.dot').removeClass('active').eq(Math.floor(i / well.slidesPerDot)).addClass('active');
+  well.dots.find('.dot').removeClass('active').eq(Math.floor(i / well.slidesPerDot)).addClass('active');
 };
 
 Well.prototype.dot = function (i, o) {
