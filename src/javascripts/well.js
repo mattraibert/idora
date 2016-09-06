@@ -7,7 +7,7 @@ if (typeof jQuery !== 'undefined') {
 if (typeof framework !== 'undefined') {
   var well;
   framework.fn.well = function () {
-    well = new Well(this).setupKeyboard().buildStage().buildArrows().buildDots().setupSwipes();
+    well = new Well(this).buildStage().setupKeyboard().buildArrows().buildDots().setupSwipes();
 
     return this;
   };
@@ -25,18 +25,6 @@ function Well(root) {
 Well.prototype.buildStage = function () {
   this.root.wrapInner("<div class='carousel_stage'></div>").wrapInner("<div class='carousel_inner'></div>");
   return this;
-};
-
-Well.prototype.scrollNext = function () {
-  this.scrollBy(1);
-};
-
-Well.prototype.scrollPrev = function () {
-  this.scrollBy(-1);
-};
-
-Well.prototype.scrollBy = function (n) {
-  this.scrollTo(this.currentItem + n);
 };
 
 Well.prototype.numItems = function () {
@@ -77,6 +65,8 @@ Well.prototype.findSlideNum = function (i) {
 
 //Swipe
 
+//todo maybe try something more like: https://jsfiddle.net/Richard_Liu/7cqqcrmm/
+
 Well.prototype.setupSwipes = function () {
   var well = this;
   well.root.find("*").on("dragstart", function () {
@@ -89,6 +79,20 @@ Well.prototype.setupSwipes = function () {
   });
 
   return well;
+};
+
+//Stateful navigation
+
+Well.prototype.scrollNext = function () {
+  this.scrollBy(1);
+};
+
+Well.prototype.scrollPrev = function () {
+  this.scrollBy(-1);
+};
+
+Well.prototype.scrollBy = function (n) {
+  this.scrollTo(this.currentItem + n);
 };
 
 //Keyboard
