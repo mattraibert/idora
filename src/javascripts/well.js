@@ -34,7 +34,7 @@ if (typeof jQuery !== 'undefined') {
 if (typeof framework !== 'undefined') {
   var well;
   framework.fn.well = function () {
-    well = new Well(this).setupKeyboard().buildStage().buildArrows().buildDots().setupHammer();
+    well = new Well(this).setupKeyboard().buildStage().buildArrows().buildDots().setupSwipes();
 
     return this;
   };
@@ -69,11 +69,13 @@ Well.prototype.numItems = function () {
 };
 
 Well.prototype.scrollTo = function (i) {
+  var well = this;
   var stage = $(".carousel_stage");
-  var target = this.findSlideNum(i);
+  var target = well.findSlideNum(i);
   var left = stage.find("div:nth-child(" + target + ")").position().left;
   stage.animate({'left': -1 * left}, {queue: false, duration: 300});
-  this.currentItem = i;
+  well.root.trigger("well:scrollTo", i);
+  well.currentItem = i;
 };
 
 Well.prototype.findSlideNum = function (i) {
@@ -89,18 +91,18 @@ Well.prototype.findSlideNum = function (i) {
 
 //Swipe
 
-Well.prototype.setupHammer = function () {
-  this.root.find("*").on("dragstart", function() {
+Well.prototype.setupSwipes = function () {
+  var well = this;
+  well.root.find("*").on("dragstart", function () {
     return false;
   });
-  var well = this;
-  this.root.hammer().on("panstart", function (ev) {
+  well.root.hammer().on("panstart", function (ev) {
     var deltaX = ev.gesture.deltaX;
     var scrollAmt = Math.min(Math.round(deltaX / -8), 10);
     well.scrollBy(scrollAmt);
   });
 
-  return this;
+  return well;
 };
 
 //Keyboard
@@ -117,7 +119,7 @@ Well.prototype.setupKeyboard = function () {
       e.preventDefault();
     }
   });
-  return this;
+  return well;
 };
 
 //Arrows
@@ -131,8 +133,8 @@ Well.prototype.buildArrows = function () {
   nav.append($("<div class='next arrow'></div>").on("click", function () {
     well.scrollNext();
   }));
-  this.root.append(nav);
-  return this;
+  well.root.append(nav);
+  return well;
 };
 
 //Dots
@@ -140,13 +142,23 @@ Well.prototype.buildArrows = function () {
 Well.prototype.buildDots = function () {
   var dots = $("<div class='dots'></div>");
   var well = this;
+  well.slidesPerDot = 5;
   $(".carousel_stage").children().each(function (i, o) {
-    if (i % 5 == 0) {
+    if (i % well.slidesPerDot == 0) {
       dots.append(well.dot(i, o));
     }
   });
-  this.root.append(dots);
-  return this;
+  well.root.on("well:scrollTo", function (e, i) {
+    well.activateDots(i);
+  });
+  well.root.append(dots);
+  well.activateDots(1);
+  return well;
+};
+
+Well.prototype.activateDots = function (i) {
+  var well = this;
+  well.root.find('.dot').removeClass('active').eq(Math.floor(i / well.slidesPerDot)).addClass('active');
 };
 
 Well.prototype.dot = function (i, o) {
