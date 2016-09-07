@@ -19,8 +19,9 @@ function Idora(root) {
   this.root = root;
   this.startOn = 0;
   this.state = new Idora.StatefulNavigation(this);
-  this.slidesPerDot = 5;
+  this.slidesPerDot = 2;
   this.loop = false;
+  this.prevPeek = 40;
 }
 
 Idora.prototype.buildStage = function () {
@@ -38,6 +39,9 @@ Idora.prototype.scrollTo = function (i) {
   var stage = $(".idora-stage");
   var target = idora.findSlideNum(i);
   var left = stage.find(".idora-slide:nth-child(" + (target + 1) + ")").position().left;
+  if (this.loop || target != 0) {
+    left -= idora.prevPeek;
+  }
   stage.animate({'left': -1 * left}, {queue: false, duration: 300});
   idora.root.trigger("idora:scrollTo", target);
 };
@@ -67,7 +71,6 @@ Idora.prototype.findSlideNum = function (i) {
 //Swipe
 
 //todo maybe try something more like: https://jsfiddle.net/Richard_Liu/7cqqcrmm/
-
 Idora.prototype.setupSwipes = function () {
   var idora = this;
   idora.root.find("*").on("dragstart", function () {
@@ -77,7 +80,7 @@ Idora.prototype.setupSwipes = function () {
     var deltaY = ev.gesture.deltaY;
     var deltaX = ev.gesture.deltaX;
 
-    if(Math.abs(deltaX) > Math.abs(deltaY)) {
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
       var scrollAmt = Math.min(Math.round(deltaX / -8), 10);
       idora.state.scrollBy(scrollAmt);
     }
@@ -88,7 +91,7 @@ Idora.prototype.setupSwipes = function () {
 
 //Stateful navigation
 
-Idora.StatefulNavigation = function(idora) {
+Idora.StatefulNavigation = function (idora) {
   this.idora = idora;
   this.currentItem = idora.startOn;
   var state = this;
