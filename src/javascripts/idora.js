@@ -39,7 +39,6 @@ Idora.prototype.scrollTo = function (i) {
   var left = stage.find("div:nth-child(" + (target + 1) + ")").position().left;
   stage.animate({'left': -1 * left}, {queue: false, duration: 300});
   idora.root.trigger("idora:scrollTo", target);
-  idora.currentItem = target;
 };
 
 Idora.prototype.findSlideNum = function (i) {
