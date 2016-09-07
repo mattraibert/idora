@@ -6,8 +6,8 @@ if (typeof jQuery !== 'undefined') {
 
 if (typeof framework !== 'undefined') {
   var idora;
-  framework.fn.idora = function () {
-    idora = new Idora(this).buildStage().setupKeyboard().buildArrows().buildDots().setupSwipes();
+  framework.fn.idora = function (opts) {
+    idora = new Idora(this, opts).buildStage().setupKeyboard().buildArrows().buildDots().setupSwipes();
 
     return this;
   };
@@ -15,13 +15,21 @@ if (typeof framework !== 'undefined') {
   console.error("no jQuery style plugin loaded; Idora may not work.");
 }
 
-function Idora(root) {
+function Idora(root, opts) {
+  var defaults = {
+    startOn: 0,
+    slidesPerDot: 1,
+    loop: false,
+    prevPeek: 0
+  };
+
+  opts = $.extend(defaults, opts);
+  this.startOn = opts.startOn;
+  this.slidesPerDot = opts.slidesPerDot;
+  this.loop = opts.loop;
+  this.prevPeek = opts.prevPeek;
   this.root = root;
-  this.startOn = 0;
   this.state = new Idora.StatefulNavigation(this);
-  this.slidesPerDot = 2;
-  this.loop = false;
-  this.prevPeek = 40;
 }
 
 Idora.prototype.buildStage = function () {
