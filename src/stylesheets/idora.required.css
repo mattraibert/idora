@@ -1,19 +1,19 @@
-#carousel {
+#idora {
   position: relative;
 }
 
-.carousel_inner {
+.idora-inner {
   float: left;
   width: 100%;
   height: 100%;
   overflow: hidden;
 }
 
-.carousel_stage {
+.idora-stage {
   width: 999999px;
   position: relative;
 }
 
-.carousel_stage > * {
+.idora-stage > * {
   display: inline-block;
 }

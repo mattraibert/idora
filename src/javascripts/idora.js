@@ -5,44 +5,44 @@ if (typeof jQuery !== 'undefined') {
 }
 
 if (typeof framework !== 'undefined') {
-  var well;
-  framework.fn.well = function () {
-    well = new Well(this).buildStage().setupKeyboard().buildArrows().buildDots().setupSwipes();
+  var idora;
+  framework.fn.idora = function () {
+    idora = new Idora(this).buildStage().setupKeyboard().buildArrows().buildDots().setupSwipes();
 
     return this;
   };
 } else {
-  console.error("no jQuery style plugin loaded; Well may not work.");
+  console.error("no jQuery style plugin loaded; Idora may not work.");
 }
 
-function Well(root) {
+function Idora(root) {
   this.root = root;
   this.startOn = 0;
-  this.state = new Well.StatefulNavigation(this);
+  this.state = new Idora.StatefulNavigation(this);
   this.slidesPerDot = 5;
   this.loop = false;
 }
 
-Well.prototype.buildStage = function () {
-  this.root.wrapInner("<div class='carousel_stage'></div>").wrapInner("<div class='carousel_inner'></div>");
+Idora.prototype.buildStage = function () {
+  this.root.wrapInner("<div class='idora-stage'></div>").wrapInner("<div class='idora-inner'></div>");
   return this;
 };
 
-Well.prototype.numItems = function () {
-  return $(".carousel_stage").children().length;
+Idora.prototype.numItems = function () {
+  return $(".idora-stage").children().length;
 };
 
-Well.prototype.scrollTo = function (i) {
-  var well = this;
-  var stage = $(".carousel_stage");
-  var target = well.findSlideNum(i);
+Idora.prototype.scrollTo = function (i) {
+  var idora = this;
+  var stage = $(".idora-stage");
+  var target = idora.findSlideNum(i);
   var left = stage.find("div:nth-child(" + (target + 1) + ")").position().left;
   stage.animate({'left': -1 * left}, {queue: false, duration: 300});
-  well.root.trigger("well:scrollTo", target);
-  well.currentItem = target;
+  idora.root.trigger("idora:scrollTo", target);
+  idora.currentItem = target;
 };
 
-Well.prototype.findSlideNum = function (i) {
+Idora.prototype.findSlideNum = function (i) {
   var numItems = this.numItems();
   var ret;
   if (this.loop) {
@@ -68,101 +68,101 @@ Well.prototype.findSlideNum = function (i) {
 
 //todo maybe try something more like: https://jsfiddle.net/Richard_Liu/7cqqcrmm/
 
-Well.prototype.setupSwipes = function () {
-  var well = this;
-  well.root.find("*").on("dragstart", function () {
+Idora.prototype.setupSwipes = function () {
+  var idora = this;
+  idora.root.find("*").on("dragstart", function () {
     return false;
   });
-  well.root.hammer().on("panstart", function (ev) {
+  idora.root.hammer().on("panstart", function (ev) {
     var deltaX = ev.gesture.deltaX;
     var scrollAmt = Math.min(Math.round(deltaX / -8), 10);
-    well.state.scrollBy(scrollAmt);
+    idora.state.scrollBy(scrollAmt);
   });
 
-  return well;
+  return idora;
 };
 
 //Stateful navigation
 
-Well.StatefulNavigation = function(well) {
-  this.well = well;
-  this.currentItem = well.startOn;
+Idora.StatefulNavigation = function(idora) {
+  this.idora = idora;
+  this.currentItem = idora.startOn;
   var state = this;
-  this.well.root.on("well:scrollTo", function (e, i) {
+  this.idora.root.on("idora:scrollTo", function (e, i) {
     state.currentItem = i;
   });
 };
 
-Well.StatefulNavigation.prototype.scrollNext = function () {
+Idora.StatefulNavigation.prototype.scrollNext = function () {
   this.scrollBy(1);
 };
 
-Well.StatefulNavigation.prototype.scrollPrev = function () {
+Idora.StatefulNavigation.prototype.scrollPrev = function () {
   this.scrollBy(-1);
 };
 
-Well.StatefulNavigation.prototype.scrollBy = function (n) {
-  this.well.scrollTo(this.currentItem + n);
+Idora.StatefulNavigation.prototype.scrollBy = function (n) {
+  this.idora.scrollTo(this.currentItem + n);
 };
 
 //Keyboard
 
-Well.prototype.setupKeyboard = function () {
-  var well = this;
+Idora.prototype.setupKeyboard = function () {
+  var idora = this;
   $(document).on("keydown", function (e) {
     if (e.which == 37) {
-      well.state.scrollPrev();
+      idora.state.scrollPrev();
       e.preventDefault();
     }
     if (e.which == 39) {
-      well.state.scrollNext();
+      idora.state.scrollNext();
       e.preventDefault();
     }
   });
-  return well;
+  return idora;
 };
 
 //Arrows
 
-Well.prototype.buildArrows = function () {
-  var well = this;
-  var nav = $("<div class='nav'></div>");
-  nav.append($("<div class='prev arrow'></div>").on("click", function () {
-    well.state.scrollPrev();
+Idora.prototype.buildArrows = function () {
+  var idora = this;
+  var nav = $("<div class='idora-nav'></div>");
+  nav.append($("<div class='idora-prev idora-arrow'></div>").on("click", function () {
+    idora.state.scrollPrev();
   }));
-  nav.append($("<div class='next arrow'></div>").on("click", function () {
-    well.state.scrollNext();
+  nav.append($("<div class='idora-next idora-arrow'></div>").on("click", function () {
+    idora.state.scrollNext();
   }));
-  well.root.append(nav);
-  return well;
+  idora.root.append(nav);
+  return idora;
 };
 
 //Dots
 
-Well.prototype.buildDots = function () {
-  var well = this;
-  well.dots = $("<div class='dots'></div>");
-  $(".carousel_stage").children().each(function (i, o) {
-    if (i % well.slidesPerDot == 0) {
-      well.dots.append(well.dot(i, o));
+Idora.prototype.buildDots = function () {
+  var idora = this;
+  idora.dots = $("<div class='idora-dots'></div>");
+  $(".idora-stage").children().each(function (i, o) {
+    if (i % idora.slidesPerDot == 0) {
+      idora.dots.append(idora.dot(i, o));
     }
   });
-  well.root.on("well:scrollTo", function (e, i) {
-    well.activateDots(i);
+  idora.root.on("idora:scrollTo", function (e, i) {
+    idora.activateDots(i);
   });
-  well.root.append(well.dots);
-  well.activateDots(well.startOn);
-  return well;
+  idora.root.append(idora.dots);
+  idora.activateDots(idora.startOn);
+  return idora;
 };
 
-Well.prototype.activateDots = function (i) {
-  var well = this;
-  well.dots.find('.dot').removeClass('active').eq(Math.floor(i / well.slidesPerDot)).addClass('active');
+Idora.prototype.activateDots = function (i) {
+  var idora = this;
+  idora.dots.find('.idora-dot').removeClass('idora-active').eq(Math.floor(i / idora.slidesPerDot)).addClass('idora-active');
 };
 
-Well.prototype.dot = function (i, o) {
-  var well = this;
-  return $("<div><div class='dot'></div></div>").on("click", function () {
-    well.scrollTo(i);
+Idora.prototype.dot = function (i, o) {
+  var idora = this;
+  return $("<div><div class='idora-dot'></div></div>").on("click", function () {
+    idora.scrollTo(i);
   })
 };

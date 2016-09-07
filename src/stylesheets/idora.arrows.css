@@ -1,9 +1,9 @@
-.nav .arrow {
+.idora-nav .idora-arrow {
   position: absolute;
   top: 50%;
 }
 
-.nav .next {
+.idora-nav .idora-next {
   right: -20px;
   width: 0;
   height: 0;
@@ -12,7 +12,7 @@
   border-left: 10px solid green;
 }
 
-.nav .prev {
+.idora-nav .idora-prev {
   left: -20px;
   width: 0;
   height: 0;

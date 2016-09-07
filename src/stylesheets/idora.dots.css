@@ -1,16 +1,16 @@
-.dots {
+.idora-dots {
   position: absolute;
   right: -50px;
   border: 1px solid green;
   display: inline-block;
 }
 
-.dots > div {
+.idora-dots > div {
   border: 1px solid transparent;
   margin: -1px;
 }
 
-.dot {
+.idora-dot {
   border: 1px solid green;
   border-radius: 50%;
   width: 10px;
@@ -19,6 +19,6 @@
   background-color: white;
 }
 
-.dot.active {
+.idora-dot.idora-active {
   background-color: green;
 }
