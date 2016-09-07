@@ -1,20 +1,32 @@
 <link rel="stylesheet" type="text/css" href="stylesheets/idora.required.css">
 <link rel="stylesheet" type="text/css" href="stylesheets/idora.theme.css">
-<script src="javascripts/libs/jquery-2.2.4.js" ></script>
-<script src="javascripts/libs/hammer.js" ></script>
-<script src="javascripts/libs/hammer.jquery.js" ></script>
+<script src="javascripts/libs/jquery-2.2.4.js"></script>
+<script src="javascripts/libs/hammer.js"></script>
+<script src="javascripts/libs/hammer.jquery.js"></script>
 <script src="javascripts/idora.js"></script>
 
 <script>
   $(document).ready(function () {
-    $("#idora").idora({slidesPerDot: 5});
+    $("#idora").idora({
+      slidesPerDot: 5,
+      prevPeek: 40,
+      responsive: [
+        {
+          max_width: 1024,
+          min_width: 600,
+          prevPeek: 0
+        }
+      ]
+    });
   });
 
 </script>
 <div id='idora'>
-  <div><a href='#'><img src='https://placekitten.com/200/100'/><p>Cat is napping</p></a></div>
+  <div><a href='#'><img src='https://placekitten.com/200/100'/>
+    <p>Cat is napping</p></a></div>
   <div><a href='#'><img src='https://placekitten.com/300/150'/></a></div>
-  <div><a href='#'><img src='https://placekitten.com/100/100'/><p>Cute kitten.</p></a></div>
+  <div><a href='#'><img src='https://placekitten.com/100/100'/>
+    <p>Cute kitten.</p></a></div>
   <div><a href='#'><img src='https://placekitten.com/500/200'/></a></div>
   <div><a href='#'><img src='https://placekitten.com/200/180'/></a></div>
   <div><a href='#'><img src='https://placekitten.com/300/220'/></a></div>

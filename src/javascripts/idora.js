@@ -24,6 +24,14 @@ function Idora(root, opts) {
   };
 
   opts = $.extend(defaults, opts);
+  var breakpoints = opts.responsive;
+  var matchingBreakpoints = $(breakpoints).filter(function (i, breakpoint) {
+    return ((breakpoint.min_width <= $(window).width()) && ($(window).width() <= breakpoint.max_width));
+  });
+
+  matchingBreakpoints.each(function (i, breakpoint) {
+    opts = $.extend(opts, breakpoint);
+  });
   this.startOn = opts.startOn;
   this.slidesPerDot = opts.slidesPerDot;
   this.loop = opts.loop;
