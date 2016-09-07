@@ -17,7 +17,8 @@ if (typeof framework !== 'undefined') {
 
 function Well(root) {
   this.root = root;
-  this.currentItem = 0;
+  this.startOn = 0;
+  this.state = new Well.StatefulNavigation(this);
   this.slidesPerDot = 5;
   this.loop = false;
 }
@@ -75,7 +76,7 @@ Well.prototype.setupSwipes = function () {
   well.root.hammer().on("panstart", function (ev) {
     var deltaX = ev.gesture.deltaX;
     var scrollAmt = Math.min(Math.round(deltaX / -8), 10);
-    well.scrollBy(scrollAmt);
+    well.state.scrollBy(scrollAmt);
   });
 
   return well;
@@ -83,16 +84,25 @@ Well.prototype.setupSwipes = function () {
 
 //Stateful navigation
 
-Well.prototype.scrollNext = function () {
+Well.StatefulNavigation = function(well) {
+  this.well = well;
+  this.currentItem = well.startOn;
+  var state = this;
+  this.well.root.on("well:scrollTo", function (e, i) {
+    state.currentItem = i;
+  });
+};
+
+Well.StatefulNavigation.prototype.scrollNext = function () {
   this.scrollBy(1);
 };
 
-Well.prototype.scrollPrev = function () {
+Well.StatefulNavigation.prototype.scrollPrev = function () {
   this.scrollBy(-1);
 };
 
-Well.prototype.scrollBy = function (n) {
-  this.scrollTo(this.currentItem + n);
+Well.StatefulNavigation.prototype.scrollBy = function (n) {
+  this.well.scrollTo(this.currentItem + n);
 };
 
 //Keyboard
@@ -101,11 +111,11 @@ Well.prototype.setupKeyboard = function () {
   var well = this;
   $(document).on("keydown", function (e) {
     if (e.which == 37) {
-      well.scrollPrev();
+      well.state.scrollPrev();
       e.preventDefault();
     }
     if (e.which == 39) {
-      well.scrollNext();
+      well.state.scrollNext();
       e.preventDefault();
     }
   });
@@ -118,10 +128,10 @@ Well.prototype.buildArrows = function () {
   var well = this;
   var nav = $("<div class='nav'></div>");
   nav.append($("<div class='prev arrow'></div>").on("click", function () {
-    well.scrollPrev();
+    well.state.scrollPrev();
   }));
   nav.append($("<div class='next arrow'></div>").on("click", function () {
-    well.scrollNext();
+    well.state.scrollNext();
   }));
   well.root.append(nav);
   return well;
@@ -141,7 +151,7 @@ Well.prototype.buildDots = function () {
     well.activateDots(i);
   });
   well.root.append(well.dots);
-  well.activateDots(well.currentItem);
+  well.activateDots(well.startOn);
   return well;
 };
 
