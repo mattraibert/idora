@@ -74,9 +74,13 @@ Idora.prototype.setupSwipes = function () {
     return false;
   });
   idora.root.hammer().on("panstart", function (ev) {
+    var deltaY = ev.gesture.deltaY;
     var deltaX = ev.gesture.deltaX;
-    var scrollAmt = Math.min(Math.round(deltaX / -8), 10);
-    idora.state.scrollBy(scrollAmt);
+
+    if(Math.abs(deltaX) > Math.abs(deltaY)) {
+      var scrollAmt = Math.min(Math.round(deltaX / -8), 10);
+      idora.state.scrollBy(scrollAmt);
+    }
   });
 
   return idora;
