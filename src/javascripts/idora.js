@@ -24,6 +24,7 @@ function Idora(root) {
 }
 
 Idora.prototype.buildStage = function () {
+  this.root.children().addClass('idora-slide');
   this.root.wrapInner("<div class='idora-stage'></div>").wrapInner("<div class='idora-inner'></div>");
   return this;
 };
@@ -36,7 +37,7 @@ Idora.prototype.scrollTo = function (i) {
   var idora = this;
   var stage = $(".idora-stage");
   var target = idora.findSlideNum(i);
-  var left = stage.find("div:nth-child(" + (target + 1) + ")").position().left;
+  var left = stage.find(".idora-slide:nth-child(" + (target + 1) + ")").position().left;
   stage.animate({'left': -1 * left}, {queue: false, duration: 300});
   idora.root.trigger("idora:scrollTo", target);
 };
