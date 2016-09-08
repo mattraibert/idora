@@ -8,9 +8,12 @@ if (typeof framework !== 'undefined') {
   var idora;
   framework.fn.idora = function (opts) {
     idora = new Idora(this, opts).buildStage().setupKeyboard().buildArrows().buildDots().setupSwipes();
-
     return this;
   };
+  framework.fn.idora.destroy = function () {
+    idora.destroy();
+  };
+
 } else {
   console.error("no jQuery style plugin loaded; Idora may not work.");
 }
@@ -23,22 +26,36 @@ function Idora(root, opts) {
     prevPeek: 0
   };
 
-  opts = $.extend(defaults, opts);
-  var breakpoints = opts.responsive;
-  var matchingBreakpoints = $(breakpoints).filter(function (i, breakpoint) {
-    return ((breakpoint.min_width <= $(window).width()) && ($(window).width() <= breakpoint.max_width));
+  this.opts = $.extend(defaults, opts);
+  this.opts = Idora.applyBreakpoints(this.opts);
+  this.startOn = this.opts.startOn;
+  this.slidesPerDot = this.opts.slidesPerDot;
+  this.loop = this.opts.loop;
+  this.prevPeek = this.opts.prevPeek;
+  this.root = root;
+  this.state = new Idora.StatefulNavigation(this);
+  this.handlers = {};
+}
+
+Idora.prototype.destroy = function () {
+  $('.idora-nav').remove();
+  $('.idora-dots').remove();
+  $('.idora-slide').unwrap().unwrap().removeClass('idora-slide');
+  this.root.find('*').off("dragstart", this.handlers.draghandler);
+  this.root.hammer().off("panstart", this.handlers.swipehandler);
+};
+
+Idora.applyBreakpoints = function (opts) {
+  var matchingBreakpoints = $(opts.responsive).filter(function (i, breakpoint) {
+    var windowWidth = $(window).width();
+    return ((breakpoint.min_width <= windowWidth) && (windowWidth <= breakpoint.max_width));
   });
 
   matchingBreakpoints.each(function (i, breakpoint) {
     opts = $.extend(opts, breakpoint);
   });
-  this.startOn = opts.startOn;
-  this.slidesPerDot = opts.slidesPerDot;
-  this.loop = opts.loop;
-  this.prevPeek = opts.prevPeek;
-  this.root = root;
-  this.state = new Idora.StatefulNavigation(this);
-}
+  return opts;
+};
 
 Idora.prototype.buildStage = function () {
   this.root.children().addClass('idora-slide');
@@ -89,10 +106,14 @@ Idora.prototype.findSlideNum = function (i) {
 //todo maybe try something more like: https://jsfiddle.net/Richard_Liu/7cqqcrmm/
 Idora.prototype.setupSwipes = function () {
   var idora = this;
-  idora.root.find("*").on("dragstart", function () {
+
+  idora.handlers.draghandler = function () {
     return false;
-  });
-  idora.root.hammer().on("panstart", function (ev) {
+  };
+
+  idora.root.find("*").on("dragstart", idora.handlers.draghandler);
+
+  idora.handlers.swipehandler = function (ev) {
     var deltaY = ev.gesture.deltaY;
     var deltaX = ev.gesture.deltaX;
 
@@ -100,7 +121,9 @@ Idora.prototype.setupSwipes = function () {
       var scrollAmt = Math.min(Math.round(deltaX / -8), 10);
       idora.state.scrollBy(scrollAmt);
     }
-  });
+  };
+
+  idora.root.hammer().on("panstart", idora.handlers.swipehandler);
 
   return idora;
 };
