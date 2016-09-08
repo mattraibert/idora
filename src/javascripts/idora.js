@@ -106,32 +106,15 @@ Idora.applyBreakpoints = function (opts, width) {
   return opts;
 };
 
-Idora.prototype.buildResizeListener = function(opts) {
+Idora.prototype.buildResizeListener = function (opts) {
   var idora = this;
-  var maxWidths = $(opts.responsive).map(function (i, breakpoint) {
-    return breakpoint.maxWidth
-  });
-  var minWidths = $(opts.responsive).map(function (i, breakpoint) {
-    return breakpoint.minWidth
-  });
   idora.previousWindowWidth = $(window).width();
   idora.handlers.resizr = function (e) {
     clearTimeout(idora.windowDelay);
     idora.windowDelay = window.setTimeout(function () {
-      var windowWidth = $(window).width();
-
-      var maxWidth = maxWidths[0];
-      if ((maxWidth > windowWidth) != (maxWidth > idora.previousWindowWidth)) {
-        idora.destroy();
-        idora.root.idora(opts);
-      }
-      var minWidth = minWidths[0];
-      if ((minWidth > windowWidth) != (minWidth > idora.previousWindowWidth)) {
-        idora.destroy();
-        idora.root.idora(opts);
-      }
-      idora.previousWindowWidth = windowWidth;
-    }, 50);
+      idora.destroy();
+      idora.root.idora(opts);
+    }, 200);
   };
   $(window).resize(idora.handlers.resizr);
 };
