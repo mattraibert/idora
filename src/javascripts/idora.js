@@ -208,18 +208,21 @@ Idora.prototype.buildArrows = function () {
 };
 
 Idora.prototype.disableArrows = function (target) {
+  var prev = this.root.find('.idora-prev');
   if (target == 0) {
-    $('.idora-prev').addClass('idora-disabled');
+    prev.addClass('idora-disabled');
   } else {
-    $('.idora-prev').removeClass('idora-disabled');
+    prev.removeClass('idora-disabled');
   }
 
+  var next = this.root.find('.idora-next');
   if (target == (this.numSlides() - 1)) {
-    $('.idora-next').addClass('idora-disabled');
+    next.addClass('idora-disabled');
   } else {
-    $('.idora-next').removeClass('idora-disabled');
+    next.removeClass('idora-disabled');
   }
 };
+
 //Dots
 
 Idora.prototype.buildDots = function () {
@@ -230,11 +233,12 @@ Idora.prototype.buildDots = function () {
       idora.dots.append(idora.dot(i, o));
     }
   });
+  idora.root.append(idora.dots);
   idora.root.on("idora:scrollTo", function (e, target) {
     idora.activateDots(target);
   });
-  idora.root.append(idora.dots);
   idora.activateDots(idora.startOn);
+
   return idora;
 };
 
