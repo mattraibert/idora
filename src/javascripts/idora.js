@@ -38,11 +38,12 @@ function Idora(root, opts) {
 }
 
 Idora.prototype.destroy = function () {
-  $('.idora-nav').remove();
-  $('.idora-dots').remove();
-  $('.idora-slide').unwrap().unwrap().removeClass('idora-slide');
+  this.root.find('.idora-nav').remove();
+  this.root.find('.idora-dots').remove();
+  this.root.find('.idora-slide').unwrap().unwrap().removeClass('idora-slide');
   this.root.find('*').off("dragstart", this.handlers.draghandler);
   this.root.hammer().off("panstart", this.handlers.swipehandler);
+  $(document).off("keydown", this.handlers.arrowKeyHandler);
 };
 
 Idora.applyBreakpoints = function (opts) {
@@ -155,7 +156,7 @@ Idora.StatefulNavigation.prototype.scrollBy = function (n) {
 
 Idora.prototype.setupKeyboard = function () {
   var idora = this;
-  $(document).on("keydown", function (e) {
+  idora.handlers.arrowKeyHandler = function (e) {
     if (e.which == 37) {
       idora.state.scrollPrev();
       e.preventDefault();
@@ -164,7 +165,8 @@ Idora.prototype.setupKeyboard = function () {
       idora.state.scrollNext();
       e.preventDefault();
     }
-  });
+  };
+  $(document).on("keydown", idora.handlers.arrowKeyHandler);
   return idora;
 };
 
