@@ -3,10 +3,10 @@ if (typeof jQuery !== 'undefined') {
 } else {
   framework = $;
 }
-
 if (typeof framework !== 'undefined') {
   var idora;
   framework.fn.idora = function (opts) {
+
     idora = new Idora(this, opts).buildStage().setupKeyboard().buildArrows().buildDots().setupSwipes();
     return this;
   };
@@ -26,15 +26,17 @@ function Idora(root, opts) {
     prevPeek: 0
   };
 
+  this.handlers = {};
   this.opts = $.extend(defaults, opts);
-  this.opts = Idora.applyBreakpoints(this.opts);
+  this.buildResizeListener(opts);
+  var $window = $(window);
+  this.opts = Idora.applyBreakpoints(this.opts, $window.width());
   this.startOn = this.opts.startOn;
   this.slidesPerDot = this.opts.slidesPerDot;
   this.loop = this.opts.loop;
   this.prevPeek = this.opts.prevPeek;
   this.root = root;
   this.state = new Idora.StatefulNavigation(this);
-  this.handlers = {};
 }
 
 Idora.prototype.destroy = function () {
@@ -44,18 +46,7 @@ Idora.prototype.destroy = function () {
   this.root.find('*').off("dragstart", this.handlers.draghandler);
   this.root.hammer().off("panstart", this.handlers.swipehandler);
   $(document).off("keydown", this.handlers.arrowKeyHandler);
-};
-
-Idora.applyBreakpoints = function (opts) {
-  var matchingBreakpoints = $(opts.responsive).filter(function (i, breakpoint) {
-    var windowWidth = $(window).width();
-    return ((breakpoint.min_width <= windowWidth) && (windowWidth <= breakpoint.max_width));
-  });
-
-  matchingBreakpoints.each(function (i, breakpoint) {
-    opts = $.extend(opts, breakpoint);
-  });
-  return opts;
+  $(window).off("resize", this.handlers.resizr);
 };
 
 Idora.prototype.buildStage = function () {
@@ -100,6 +91,49 @@ Idora.prototype.findSlideNum = function (i) {
   }
 
   return ret;
+};
+
+//Responsive
+
+Idora.applyBreakpoints = function (opts, width) {
+  var matchingBreakpoints = $(opts.responsive).filter(function (i, breakpoint) {
+    return ((breakpoint.minWidth <= width) && (width <= breakpoint.maxWidth));
+  });
+
+  matchingBreakpoints.each(function (i, breakpoint) {
+    opts = $.extend(opts, breakpoint);
+  });
+  return opts;
+};
+
+Idora.prototype.buildResizeListener = function(opts) {
+  var idora = this;
+  var maxWidths = $(opts.responsive).map(function (i, breakpoint) {
+    return breakpoint.maxWidth
+  });
+  var minWidths = $(opts.responsive).map(function (i, breakpoint) {
+    return breakpoint.minWidth
+  });
+  idora.previousWindowWidth = $(window).width();
+  idora.handlers.resizr = function (e) {
+    clearTimeout(idora.windowDelay);
+    idora.windowDelay = window.setTimeout(function () {
+      var windowWidth = $(window).width();
+
+      var maxWidth = maxWidths[0];
+      if ((maxWidth > windowWidth) != (maxWidth > idora.previousWindowWidth)) {
+        idora.destroy();
+        idora.root.idora(opts);
+      }
+      var minWidth = minWidths[0];
+      if ((minWidth > windowWidth) != (minWidth > idora.previousWindowWidth)) {
+        idora.destroy();
+        idora.root.idora(opts);
+      }
+      idora.previousWindowWidth = windowWidth;
+    }, 50);
+  };
+  $(window).resize(idora.handlers.resizr);
 };
 
 //Swipe
