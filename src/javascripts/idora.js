@@ -55,13 +55,13 @@ Idora.prototype.buildStage = function () {
   return this;
 };
 
-Idora.prototype.numItems = function () {
-  return $(".idora-stage").children().length;
+Idora.prototype.numSlides = function () {
+  return this.root.find(".idora-stage").children().length;
 };
 
 Idora.prototype.scrollTo = function (i) {
   var idora = this;
-  var stage = $(".idora-stage");
+  var stage = idora.root.find(".idora-stage");
   var target = idora.findSlideNum(i);
   var left = stage.find(".idora-slide:nth-child(" + (target + 1) + ")").position().left;
   if (this.loop || target != 0) {
@@ -72,19 +72,19 @@ Idora.prototype.scrollTo = function (i) {
 };
 
 Idora.prototype.findSlideNum = function (i) {
-  var numItems = this.numItems();
+  var numSlides = this.numSlides();
   var ret;
   if (this.loop) {
     if (i < 0) {
-      ret = numItems - 1 - (Math.abs(i + 1) % numItems);
+      ret = numSlides - 1 - (Math.abs(i + 1) % numSlides);
     } else {
-      ret = i % numItems;
+      ret = i % numSlides;
     }
   } else {
     if (i < 0) {
       ret = 0;
-    } else if (i >= numItems) {
-      ret = numItems - 1;
+    } else if (i >= numSlides) {
+      ret = numSlides - 1;
     } else {
       ret = i;
     }
@@ -199,9 +199,27 @@ Idora.prototype.buildArrows = function () {
     idora.state.scrollNext();
   }));
   idora.root.append(nav);
+  idora.root.on("idora:scrollTo", function (e, target) {
+    idora.disableArrows(target);
+  });
+  idora.disableArrows(idora.startOn);
+
   return idora;
 };
 
+Idora.prototype.disableArrows = function (target) {
+  if (target == 0) {
+    $('.idora-prev').addClass('idora-disabled');
+  } else {
+    $('.idora-prev').removeClass('idora-disabled');
+  }
+
+  if (target == (this.numSlides() - 1)) {
+    $('.idora-next').addClass('idora-disabled');
+  } else {
+    $('.idora-next').removeClass('idora-disabled');
+  }
+};
 //Dots
 
 Idora.prototype.buildDots = function () {
@@ -212,8 +230,8 @@ Idora.prototype.buildDots = function () {
       idora.dots.append(idora.dot(i, o));
     }
   });
-  idora.root.on("idora:scrollTo", function (e, i) {
-    idora.activateDots(i);
+  idora.root.on("idora:scrollTo", function (e, target) {
+    idora.activateDots(target);
   });
   idora.root.append(idora.dots);
   idora.activateDots(idora.startOn);
