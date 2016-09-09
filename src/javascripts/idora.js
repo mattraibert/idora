@@ -112,8 +112,10 @@ Idora.prototype.buildResizeListener = function (opts) {
   idora.handlers.resizr = function (e) {
     clearTimeout(idora.windowDelay);
     idora.windowDelay = window.setTimeout(function () {
-      idora.destroy();
-      idora.root.idora(opts);
+      if (idora.previousWindowWidth != $(window).width()) {
+        idora.destroy();
+        idora.root.idora(opts);
+      }
     }, 200);
   };
   $(window).resize(idora.handlers.resizr);
