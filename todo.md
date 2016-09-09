@@ -5,3 +5,4 @@ todo
 * multiple carousels on the same page
 * vertical scrolling
 * improve physics
+* tests!
