@@ -6,7 +6,7 @@
   ],
   "description": "",
   "main": "src/idora.js",
-  "license": "LGPLv3",
+  "license": "LGPL-3.0",
   "ignore": [
     "**/.*",
     "node_modules",
