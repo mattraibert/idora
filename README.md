@@ -6,7 +6,7 @@ An easy to use, modular carousel jQuery plugin. Built with modularity and code-s
 Idora Carousel is named for the original name of [Jane's Carousel](https://en.wikipedia.org/wiki/Jane%27s_Carousel) in DUMBO. 
 
 
-This file is part of Idora.
+Copyright 2016 Position Development, LLC.
 
 Idora is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
