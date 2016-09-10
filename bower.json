@@ -15,6 +15,7 @@
     "tests"
   ],
   "dependencies": {
-    "hammerjs": "hammer.js#^2.0.8"
+    "hammerjs": "hammer.js#^2.0.8",
+    "jquery": ">=2.2.4 <4"
   }
 }
