@@ -1,0 +1,17 @@
+{
+  "name": "idora",
+  "homepage": "https://github.com/mattraibert/idora",
+  "authors": [
+    "Matt J Raibert <mattraibert@positiondev.com>"
+  ],
+  "description": "",
+  "main": "src/idora.js",
+  "license": "LGPLv3",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
