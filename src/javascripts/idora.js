@@ -7,7 +7,7 @@ if (typeof framework !== 'undefined') {
   var idora;
   framework.fn.idora = function (opts) {
 
-    idora = new Idora(this, opts).buildStage().setupKeyboard().buildArrows().buildDots().setupSwipes();
+    idora = new Idora(this, opts);
     return this;
   };
   framework.fn.idora.destroy = function () {
@@ -37,7 +37,13 @@ function Idora(root, opts) {
   this.prevPeek = this.opts.prevPeek;
   this.root = root;
   this.state = new Idora.StatefulNavigation(this);
+  this.buildPlugins();
+  this.root.trigger("idora:scrollTo", this.startOn);
 }
+
+Idora.prototype.buildPlugins = function () {
+  this.buildStage().setupKeyboard().buildArrows().buildDots().setupSwipes();
+};
 
 Idora.prototype.destroy = function () {
   this.root.find('.idora-nav').remove();
@@ -204,7 +210,6 @@ Idora.prototype.buildArrows = function () {
   idora.root.on("idora:scrollTo", function (e, target) {
     idora.disableArrows(target);
   });
-  idora.disableArrows(idora.startOn);
 
   return idora;
 };
@@ -239,7 +244,6 @@ Idora.prototype.buildDots = function () {
   idora.root.on("idora:scrollTo", function (e, target) {
     idora.activateDots(target);
   });
-  idora.activateDots(idora.startOn);
 
   return idora;
 };
