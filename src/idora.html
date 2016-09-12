@@ -9,13 +9,15 @@
 <script>
   $(document).ready(function () {
     $("#idora").idora({
-      slidesPerDot: 5,
+      slidesPerDot: 10,
+      center: false,
       prevPeek: 50,
       responsive: [
         {
-          maxWidth: 1500,
-          minWidth: 1100,
-          slidesPerDot: 10
+          maxWidth: 800,
+          minWidth: 0,
+          slidesPerDot: 20,
+          center: true
         }
       ]
     });

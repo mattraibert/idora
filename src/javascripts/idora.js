@@ -4,22 +4,20 @@ function Idora(root, opts) {
     startOn: 0,
     slidesPerDot: 1,
     loop: false,
-    prevPeek: 0
+    prevPeek: 0,
+    center: false
   };
 
   this.handlers = {};
+  var optsWDefaults = $.extend(defaults, opts);
   this.buildResizeListener(opts);
-  this.opts = Idora.applyBreakpoints($.extend(defaults, opts), $(window).width());
-  Idora.buildStage(this.root);
+  this.opts = Idora.applyBreakpoints(optsWDefaults);
+  this.root.wrapInner("<div class='idora-stage'></div>").wrapInner("<div class='idora-inner'></div>");
+  this.root.find(".idora-stage").children().addClass('idora-slide');
   this.state = new Idora.StatefulNavigation(this);
   this.buildPlugins();
-  this.root.trigger("idora:scrollTo", this.opts.startOn);
+  this.scrollTo(this.opts.startOn);
 }
-
-Idora.buildStage = function (root) {
-  root.wrapInner("<div class='idora-stage'></div>").wrapInner("<div class='idora-inner'></div>");
-  root.find(".idora-stage").children().addClass('idora-slide');
-};
 
 Idora.prototype.buildPlugins = function () {
   this.setupKeyboard().buildArrows().setupSwipes();
@@ -29,11 +27,11 @@ Idora.prototype.buildPlugins = function () {
 Idora.prototype.destroy = function () {
   this.dots.destroy();
   this.root.find('.idora-nav').remove();
-  this.root.find('.idora-slide').unwrap().unwrap().removeClass('idora-slide');
   this.root.find('*').off("dragstart", this.handlers.draghandler);
   this.root.hammer().off("panstart", this.handlers.swipehandler);
   $(document).off("keydown", this.handlers.arrowKeyHandler);
   $(window).off("resize", this.handlers.resizr);
+  this.root.find('.idora-slide').unwrap().unwrap().removeClass('idora-slide');
 };
 
 Idora.prototype.slides = function () {
@@ -60,9 +58,13 @@ Idora.prototype.scrollTo = function (target) {
 };
 
 Idora.prototype.moveByPx = function (target) {
-  var left = this.slides().eq(target).position().left;
+  var slide = this.slides().eq(target);
+  var left = slide.position().left;
   if (this.opts.loop || target != 0) {
     left -= this.opts.prevPeek;
+  }
+  if (this.opts.center) {
+    left -= (this.root.width() / 2) - (slide.width() / 2);
   }
   return -1 * left;
 };
@@ -85,8 +87,9 @@ Idora.prototype.findSlideNum = function (i) {
 
 //Responsive
 
-Idora.applyBreakpoints = function (opts, width) {
+Idora.applyBreakpoints = function (opts) {
   var matchingBreakpoints = $(opts.responsive).filter(function (i, breakpoint) {
+    var width = $(window).width();
     return ((breakpoint.minWidth <= width) && (width <= breakpoint.maxWidth));
   });
 
