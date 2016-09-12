@@ -22,12 +22,13 @@ function Idora(root, opts) {
 }
 
 Idora.prototype.buildPlugins = function () {
-  this.buildStage().setupKeyboard().buildArrows().buildDots().setupSwipes();
+  this.buildStage().setupKeyboard().buildArrows().setupSwipes();
+  this.dots = new Idora.Dots(this);
 };
 
 Idora.prototype.destroy = function () {
+  this.dots.destroy();
   this.root.find('.idora-nav').remove();
-  this.root.find('.idora-dots').remove();
   this.root.find('.idora-slide').unwrap().unwrap().removeClass('idora-slide');
   this.root.find('*').off("dragstart", this.handlers.draghandler);
   this.root.hammer().off("panstart", this.handlers.swipehandler);
@@ -35,30 +36,45 @@ Idora.prototype.destroy = function () {
   $(window).off("resize", this.handlers.resizr);
 };
 
+Idora.prototype.slides = function () {
+  return this.root.find(".idora-stage").find('.idora-slide');
+};
+
+
+Idora.prototype.append = function (elem) {
+  this.root.append(elem);
+};
+
+Idora.prototype.scrollToHandler = function (handler) {
+  this.root.on("idora:scrollTo", function (event, target) {
+    return handler(target);
+  });
+};
+
 Idora.prototype.buildStage = function () {
-  this.root.children().addClass('idora-slide');
   this.root.wrapInner("<div class='idora-stage'></div>").wrapInner("<div class='idora-inner'></div>");
+  this.root.find(".idora-stage").children().addClass('idora-slide');
   return this;
 };
 
-Idora.prototype.numSlides = function () {
-  return this.root.find(".idora-stage").children().length;
-};
-
-Idora.prototype.scrollTo = function (i) {
+Idora.prototype.scrollTo = function (target) {
   var idora = this;
+  target = idora.findSlideNum(target);
   var stage = idora.root.find(".idora-stage");
-  var target = idora.findSlideNum(i);
-  var left = stage.find(".idora-slide:nth-child(" + (target + 1) + ")").position().left;
-  if (this.loop || target != 0) {
-    left -= idora.prevPeek;
-  }
-  stage.animate({'left': -1 * left}, {queue: false, duration: 300});
+  stage.animate({'left': this.moveByPx(target)}, {queue: false, duration: 300});
   idora.root.trigger("idora:scrollTo", target);
 };
 
+Idora.prototype.moveByPx = function(target) {
+  var left = this.slides().eq(target).position().left;
+  if (this.loop || target != 0) {
+    left -= this.prevPeek;
+  }
+  return -1 * left;
+};
+
 Idora.prototype.findSlideNum = function (i) {
-  var numSlides = this.numSlides();
+  var numSlides = this.slides().length;
   var ret;
   if (this.loop) {
     if (i < 0) {
@@ -140,7 +156,7 @@ Idora.StatefulNavigation = function (idora) {
   this.idora = idora;
   this.currentItem = idora.startOn;
   var state = this;
-  this.idora.root.on("idora:scrollTo", function (e, i) {
+  this.idora.scrollToHandler(function (i) {
     state.currentItem = i;
   });
 };
@@ -186,8 +202,8 @@ Idora.prototype.buildArrows = function () {
   nav.append($("<div class='idora-next idora-arrow'></div>").on("click", function () {
     idora.state.scrollNext();
   }));
-  idora.root.append(nav);
-  idora.root.on("idora:scrollTo", function (e, target) {
+  idora.append(nav);
+  idora.scrollToHandler(function (target) {
     idora.disableArrows(target);
   });
 
@@ -203,39 +219,38 @@ Idora.prototype.disableArrows = function (target) {
   }
 
   var next = this.root.find('.idora-next');
-  if (target == (this.numSlides() - 1)) {
+  if (target == (this.slides().length - 1)) {
     next.addClass('idora-disabled');
   } else {
     next.removeClass('idora-disabled');
   }
 };
 
-//Dots
-
-Idora.prototype.buildDots = function () {
-  var idora = this;
-  idora.dots = $("<div class='idora-dots'></div>");
-  $(".idora-stage").children().each(function (i, o) {
+Idora.Dots = function (idora) {
+  this.idora = idora;
+  this.dotContainer = $("<div class='idora-dots'></div>");
+  var dots = this;
+  idora.slides().each(function (i, o) {
     if (i % idora.slidesPerDot == 0) {
-      idora.dots.append(idora.dot(i, o));
+      dots.dotContainer.append(dots.dot(i, o));
     }
   });
-  idora.root.append(idora.dots);
-  idora.root.on("idora:scrollTo", function (e, target) {
-    idora.activateDots(target);
+  idora.append(this.dotContainer);
+  idora.scrollToHandler(function (target) {
+    dots.activateDots(target);
   });
-
-  return idora;
 };
 
-Idora.prototype.activateDots = function (i) {
-  var idora = this;
-  idora.dots.find('.idora-dot').removeClass('idora-active').eq(Math.floor(i / idora.slidesPerDot)).addClass('idora-active');
+Idora.Dots.prototype.destroy = function () {
 };
 
-Idora.prototype.dot = function (i, o) {
-  var idora = this;
+Idora.Dots.prototype.activateDots = function (i) {
+  this.dotContainer.find('.idora-dot').removeClass('idora-active').eq(Math.floor(i / this.idora.slidesPerDot)).addClass('idora-active');
+};
+
+Idora.Dots.prototype.dot = function (i, o) {
+  var dots = this;
   return $("<div><div class='idora-dot'></div></div>").on("click", function () {
-    idora.scrollTo(i);
+    dots.idora.scrollTo(i);
   })
 };
