@@ -1,23 +1,53 @@
 function Idora(root, opts) {
   this.root = root;
-  var defaults = {
+  this.opts = new Idora.Options(opts, {
     startOn: 0,
     slidesPerDot: 1,
     loop: false,
     prevPeek: 0,
     center: false
-  };
-
+  });
   this.handlers = {};
-  var optsWDefaults = $.extend(defaults, opts);
   this.buildResizeListener(opts);
-  this.opts = Idora.applyBreakpoints(optsWDefaults);
   this.root.wrapInner("<div class='idora-stage'></div>").wrapInner("<div class='idora-inner'></div>");
   this.root.find(".idora-stage").children().addClass('idora-slide');
   this.state = new Idora.StatefulNavigation(this);
   this.buildPlugins();
-  this.scrollTo(this.opts.startOn);
+  this.scrollTo(this.opt("startOn"));
 }
+
+Idora.prototype.opt = function (optname) {
+  return this.opts.get(optname);
+};
+
+Idora.Options = function (opts, defaults) {
+  this.opts = opts;
+  this.defaults = defaults;
+  this.applyDefaults();
+  this.applyBreakpoints();
+};
+
+Idora.Options.prototype.get = function (optname) {
+  return this.opts[optname];
+};
+
+Idora.Options.prototype.applyDefaults = function () {
+  this.opts = $.extend(this.defaults, this.opts);
+};
+
+Idora.Options.prototype.applyBreakpoints = function () {
+  var xthis = this;
+  var matchingBreakpoints = $(xthis.opts.responsive).filter(this.matchingBreakpoint);
+
+  matchingBreakpoints.each(function (_, breakpoint) {
+    xthis.opts = $.extend(xthis.opts, breakpoint);
+  });
+};
+
+Idora.Options.prototype.matchingBreakpoint = function (_, breakpoint) {
+  var width = $(window).width();
+  return (breakpoint.minWidth <= width) && (width <= breakpoint.maxWidth);
+};
 
 Idora.prototype.buildPlugins = function () {
   this.setupKeyboard().buildArrows().setupSwipes();
@@ -60,10 +90,10 @@ Idora.prototype.scrollTo = function (target) {
 Idora.prototype.moveByPx = function (target) {
   var slide = this.slides().eq(target);
   var left = slide.position().left;
-  if (this.opts.loop || target != 0) {
-    left -= this.opts.prevPeek;
+  if (this.opt("loop") || target != 0) {
+    left -= this.opt("prevPeek");
   }
-  if (this.opts.center) {
+  if (this.opt("center")) {
     left -= (this.root.width() / 2) - (slide.width() / 2);
   }
   return -1 * left;
@@ -72,7 +102,7 @@ Idora.prototype.moveByPx = function (target) {
 Idora.prototype.findSlideNum = function (i) {
   var numSlides = this.slides().length;
   var ret;
-  if (this.opts.loop) {
+  if (this.opt("loop")) {
     if (i < 0) {
       ret = numSlides - 1 - (Math.abs(i + 1) % numSlides);
     } else {
@@ -86,18 +116,6 @@ Idora.prototype.findSlideNum = function (i) {
 };
 
 //Responsive
-
-Idora.applyBreakpoints = function (opts) {
-  var matchingBreakpoints = $(opts.responsive).filter(function (i, breakpoint) {
-    var width = $(window).width();
-    return ((breakpoint.minWidth <= width) && (width <= breakpoint.maxWidth));
-  });
-
-  matchingBreakpoints.each(function (i, breakpoint) {
-    opts = $.extend(opts, breakpoint);
-  });
-  return opts;
-};
 
 Idora.prototype.buildResizeListener = function (opts) {
   var idora = this;
@@ -147,8 +165,8 @@ Idora.StatefulNavigation = function (idora) {
   this.idora = idora;
   this.currentItem = idora.opts.startOn;
   var state = this;
-  this.idora.scrollToHandler(function (i) {
-    state.currentItem = i;
+  this.idora.scrollToHandler(function (targetNum) {
+    state.currentItem = targetNum;
   });
 };
 
@@ -222,7 +240,7 @@ Idora.Dots = function (idora) {
   this.dotContainer = $("<div class='idora-dots'></div>");
   var dots = this;
   idora.slides().each(function (i, o) {
-    if (i % idora.opts.slidesPerDot == 0) {
+    if (i % idora.opt('slidesPerDot') == 0) {
       dots.dotContainer.append(dots.dot(i, o));
     }
   });
@@ -233,10 +251,11 @@ Idora.Dots = function (idora) {
 };
 
 Idora.Dots.prototype.destroy = function () {
+  this.dotContainer.remove();
 };
 
 Idora.Dots.prototype.activateDots = function (i) {
-  this.dotContainer.find('.idora-dot').removeClass('idora-active').eq(Math.floor(i / this.idora.opts.slidesPerDot)).addClass('idora-active');
+  this.dotContainer.find('.idora-dot').removeClass('idora-active').eq(Math.floor(i / this.idora.opt('slidesPerDot'))).addClass('idora-active');
 };
 
 Idora.Dots.prototype.dot = function (i, o) {
