@@ -1,4 +1,5 @@
 function Idora(root, opts) {
+  this.root = root;
   var defaults = {
     startOn: 0,
     slidesPerDot: 1,
@@ -7,22 +8,21 @@ function Idora(root, opts) {
   };
 
   this.handlers = {};
-  this.opts = $.extend(defaults, opts);
   this.buildResizeListener(opts);
-  var $window = $(window);
-  this.opts = Idora.applyBreakpoints(this.opts, $window.width());
-  this.startOn = this.opts.startOn;
-  this.slidesPerDot = this.opts.slidesPerDot;
-  this.loop = this.opts.loop;
-  this.prevPeek = this.opts.prevPeek;
-  this.root = root;
+  this.opts = Idora.applyBreakpoints($.extend(defaults, opts), $(window).width());
+  Idora.buildStage(this.root);
   this.state = new Idora.StatefulNavigation(this);
   this.buildPlugins();
-  this.root.trigger("idora:scrollTo", this.startOn);
+  this.root.trigger("idora:scrollTo", this.opts.startOn);
 }
 
+Idora.buildStage = function (root) {
+  root.wrapInner("<div class='idora-stage'></div>").wrapInner("<div class='idora-inner'></div>");
+  root.find(".idora-stage").children().addClass('idora-slide');
+};
+
 Idora.prototype.buildPlugins = function () {
-  this.buildStage().setupKeyboard().buildArrows().setupSwipes();
+  this.setupKeyboard().buildArrows().setupSwipes();
   this.dots = new Idora.Dots(this);
 };
 
@@ -51,12 +51,6 @@ Idora.prototype.scrollToHandler = function (handler) {
   });
 };
 
-Idora.prototype.buildStage = function () {
-  this.root.wrapInner("<div class='idora-stage'></div>").wrapInner("<div class='idora-inner'></div>");
-  this.root.find(".idora-stage").children().addClass('idora-slide');
-  return this;
-};
-
 Idora.prototype.scrollTo = function (target) {
   var idora = this;
   target = idora.findSlideNum(target);
@@ -67,8 +61,8 @@ Idora.prototype.scrollTo = function (target) {
 
 Idora.prototype.moveByPx = function (target) {
   var left = this.slides().eq(target).position().left;
-  if (this.loop || target != 0) {
-    left -= this.prevPeek;
+  if (this.opts.loop || target != 0) {
+    left -= this.opts.prevPeek;
   }
   return -1 * left;
 };
@@ -76,7 +70,7 @@ Idora.prototype.moveByPx = function (target) {
 Idora.prototype.findSlideNum = function (i) {
   var numSlides = this.slides().length;
   var ret;
-  if (this.loop) {
+  if (this.opts.loop) {
     if (i < 0) {
       ret = numSlides - 1 - (Math.abs(i + 1) % numSlides);
     } else {
@@ -148,7 +142,7 @@ Idora.prototype.setupSwipes = function () {
 
 Idora.StatefulNavigation = function (idora) {
   this.idora = idora;
-  this.currentItem = idora.startOn;
+  this.currentItem = idora.opts.startOn;
   var state = this;
   this.idora.scrollToHandler(function (i) {
     state.currentItem = i;
@@ -225,7 +219,7 @@ Idora.Dots = function (idora) {
   this.dotContainer = $("<div class='idora-dots'></div>");
   var dots = this;
   idora.slides().each(function (i, o) {
-    if (i % idora.slidesPerDot == 0) {
+    if (i % idora.opts.slidesPerDot == 0) {
       dots.dotContainer.append(dots.dot(i, o));
     }
   });
@@ -239,7 +233,7 @@ Idora.Dots.prototype.destroy = function () {
 };
 
 Idora.Dots.prototype.activateDots = function (i) {
-  this.dotContainer.find('.idora-dot').removeClass('idora-active').eq(Math.floor(i / this.idora.slidesPerDot)).addClass('idora-active');
+  this.dotContainer.find('.idora-dot').removeClass('idora-active').eq(Math.floor(i / this.idora.opts.slidesPerDot)).addClass('idora-active');
 };
 
 Idora.Dots.prototype.dot = function (i, o) {
