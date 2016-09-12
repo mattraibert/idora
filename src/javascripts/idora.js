@@ -65,7 +65,7 @@ Idora.prototype.scrollTo = function (target) {
   idora.root.trigger("idora:scrollTo", target);
 };
 
-Idora.prototype.moveByPx = function(target) {
+Idora.prototype.moveByPx = function (target) {
   var left = this.slides().eq(target).position().left;
   if (this.loop || target != 0) {
     left -= this.prevPeek;
@@ -83,13 +83,7 @@ Idora.prototype.findSlideNum = function (i) {
       ret = i % numSlides;
     }
   } else {
-    if (i < 0) {
-      ret = 0;
-    } else if (i >= numSlides) {
-      ret = numSlides - 1;
-    } else {
-      ret = i;
-    }
+    ret = Math.min(Math.max(i, 0), numSlides - 1)
   }
 
   return ret;
