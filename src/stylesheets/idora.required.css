@@ -1,4 +1,4 @@
-#idora {
+.idora-root {
   position: relative;
 }
 
@@ -12,8 +12,9 @@
 .idora-stage {
   width: 999999px;
   position: relative;
+  height: 100%;
 }
 
-.idora-stage > * {
+.idora-stage > .idora-slide {
   display: inline-block;
 }

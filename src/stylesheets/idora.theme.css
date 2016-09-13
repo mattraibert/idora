@@ -1,27 +1,31 @@
 @import "idora.arrows.css";
 @import "idora.dots.css";
 
-#idora {
+.idora-root {
   width: 800px;
-  height: 250px;
-  margin: auto;
+  height: 300px;
   border: 5px inset grey;
+  margin: 15px auto;
 }
 
-.idora-stage {
+.idora-root .idora-stage {
   margin: 0;
   padding: 0;
 }
 
-.idora-stage > * {
+.idora-stage > .idora-slide {
   vertical-align: middle;
-  padding: 4px;
+  padding: 10px;
   border: 1px solid grey;
   margin: 5px;
 }
+.idora-stage > .idora-slide.idora-active {
+  padding: 5px;
+  border: 5px solid yellow;
+}
 
-@media only screen and (max-width : 1000px) and (min-width : 0px) {
-  #idora {
+@media only screen and (max-width: 1000px) and (min-width: 0px) {
+  .idora-root {
     width: 400px;
   }
 }

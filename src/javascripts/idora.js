@@ -9,8 +9,10 @@ function Idora(root, opts) {
   });
   this.handlers = {};
   this.buildResizeListener(opts);
-  this.root.wrapInner("<div class='idora-stage'></div>").wrapInner("<div class='idora-inner'></div>");
+  this.root.addClass('idora-root').wrapInner("<div class='idora-stage'></div>").wrapInner("<div class='idora-inner'></div>");
   this.root.find(".idora-stage").children().addClass('idora-slide');
+  this.slides().first().addClass('idora-first');
+  this.slides().last().addClass('idora-last');
   this.state = new Idora.StatefulNavigation(this);
   this.buildPlugins();
   this.scrollTo(this.opt("startOn"));
@@ -83,14 +85,14 @@ Idora.prototype.scrollTo = function (target) {
   var idora = this;
   target = idora.findSlideNum(target);
   var stage = idora.root.find(".idora-stage");
-  stage.animate({'left': this.moveByPx(target)}, {queue: false, duration: 300});
+  var slide = this.slides().removeClass('idora-active').eq(target).addClass('idora-active');
+  stage.animate({'left': this.moveByPx(slide)}, {queue: false, duration: 300});
   idora.root.trigger("idora:scrollTo", target);
 };
 
-Idora.prototype.moveByPx = function (target) {
-  var slide = this.slides().eq(target);
+Idora.prototype.moveByPx = function (slide) {
   var left = slide.position().left;
-  if (this.opt("loop") || target != 0) {
+  if (this.opt("loop") || !slide.hasClass('idora-first')) {
     left -= this.opt("prevPeek");
   }
   if (this.opt("center")) {
