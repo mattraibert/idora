@@ -1,0 +1,27 @@
+{
+  "name": "idora",
+  "version": "0.9.1",
+  "description": "A tidy, functional, well-factored jquery carousel",
+  "main": "src/idora.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattraibert/idora.git"
+  },
+  "keywords": [
+    "carousel",
+    "jquery",
+    "idora",
+    "well",
+    "slideshow",
+    "slides"
+  ],
+  "author": "Matt J Raibert",
+  "license": "LGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/mattraibert/idora/issues"
+  },
+  "homepage": "https://github.com/mattraibert/idora#readme"
+}
