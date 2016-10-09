@@ -85,13 +85,15 @@ Idora.prototype.scrollTo = function (target) {
   var idora = this;
   target = idora.findSlideNum(target);
   var stage = idora.root.find(".idora-stage");
-  var slide = this.slides().removeClass('idora-active').eq(target).addClass('idora-active');
+  this.slides().removeClass('idora-active');
+  var slide = this.slides().eq(target).addClass('idora-active');
   stage.animate({'left': this.moveByPx(slide)}, {queue: false, duration: 300});
   idora.root.trigger("idora:scrollTo", target);
 };
 
 Idora.prototype.moveByPx = function (slide) {
-  var left = slide.position().left;
+  var position = slide.position();
+  var left = position.left;
   if (this.opt("loop") || !slide.hasClass('idora-first')) {
     left -= this.opt("prevPeek");
   }
