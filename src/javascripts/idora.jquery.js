@@ -1,3 +1,5 @@
+var Idora = require('./idora');
+
 if (typeof jQuery !== 'undefined') {
   framework = jQuery;
 } else {

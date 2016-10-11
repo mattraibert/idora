@@ -1,5 +1,5 @@
 module.exports = {
-  entry: './src/javascripts/idora.jquery.js',
+  entry: './src/javascripts/main.js',
   output: {
     path: __dirname + '/build',
     publicPath: '/build/',

@@ -269,3 +269,5 @@ Idora.Dots.prototype.dot = function (i, o) {
     dots.idora.scrollTo(i);
   })
 };
+
+module.exports = Idora;

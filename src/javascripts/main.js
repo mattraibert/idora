@@ -1,1 +1,1 @@
-alert("hi");
+require('./idora.jquery');
