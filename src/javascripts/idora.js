@@ -60,7 +60,7 @@ Idora.prototype.destroy = function () {
   this.dots.destroy();
   this.root.find('.idora-nav').remove();
   this.root.find('*').off("dragstart", this.handlers.draghandler);
-  this.root.hammer().off("panstart", this.handlers.swipehandler);
+  this.mc.off("panstart", this.handlers.swipehandler);
   $(document).off("keydown", this.handlers.arrowKeyHandler);
   $(window).off("resize", this.handlers.resizr);
   this.root.find('.idora-slide').unwrap().unwrap().removeClass('idora-slide');
@@ -158,7 +158,8 @@ Idora.prototype.setupSwipes = function () {
     }
   };
 
-  idora.root.hammer().on("panstart", idora.handlers.swipehandler);
+  idora.mc = new Hammer(idora.root[0]);
+  idora.mc.on("panstart", idora.handlers.swipehandler);
 
   return idora;
 };
